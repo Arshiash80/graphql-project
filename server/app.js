@@ -1,7 +1,7 @@
 const express = require('express')
 const GraphQL = require('express-graphql')
 
-const schema = require('./schema/schema')
+const schema = require('./schema/schema') // RootQuery
 
 const app = express()
 
