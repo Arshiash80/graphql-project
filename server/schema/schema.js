@@ -120,7 +120,69 @@ const RootQuery = new graphql.GraphQLObjectType({
     }
 })
 
+// Mutations
+const Mutation = new graphql.GraphQLObjectType({
+    name: "Mutation",
+    fields: {
+        CreateUser: {
+            type: UserType,
+            args: {
+                // id: { type: graphql.GraphQLID },
+                name: { type: graphql.GraphQLString },
+                age: { type: graphql.GraphQLInt },
+                profession: { type: graphql.GraphQLString }
+            },
+            resolve(parent, args) {
+                let user = {
+                    // id: args.id,
+                    name: args.name,
+                    age: args.age,
+                    profession: args.profession
+                }
+                return user
+            }
+        },
+
+        CreatePost: {
+            type: PostType,
+            args: {
+                // id: { type: graphql.GraphQLID },
+                comment: { type: graphql.GraphQLString },
+                userId: { type: graphql.GraphQLID }
+            },
+            resolve(parent, args) {
+                let post = {
+                    // id: args.id,
+                    comment: args.comment,
+                    userId: args.userId
+                }
+                return post
+            }
+        },
+
+        CreateHobby: {
+            type: HobbyType,
+            args: {
+                // id: { type: graphql.GraphQLID },
+                title: { type: graphql.GraphQLString },
+                description: { type: graphql.GraphQLString },
+                userId: { type: graphql.GraphQLID },
+            },
+            resolve(parent, args) {
+                let hobby = {
+                    // id: args.id,
+                    title: args.title,
+                    desription: args.description,
+                    userId: args.userId
+                }
+                return hobby
+            }
+        }
+    }
+})
+
 
 module.exports = new graphql.GraphQLSchema({
-    query: RootQuery
+    query: RootQuery,
+    mutation: Mutation
 })
