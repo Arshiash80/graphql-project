@@ -7,6 +7,8 @@ dotenv.config();
 const schema = require('./schema/schema') // RootQuery
 const testSchema = require('./schema/types_schema')
 
+const cors = require('cors')
+
 const app = express()
 
 let mongoDBConnectionString = process.env.MONGODB_CONNECTION_STRING
@@ -16,6 +18,7 @@ mongoose.connection.once('open', () => {
 })
 
 
+app.use(cors())
 app.use('/graphql', GraphQL.graphqlHTTP({
     graphiql: true,
     schema: schema
