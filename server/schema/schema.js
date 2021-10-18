@@ -166,6 +166,28 @@ const Mutation = new graphql.GraphQLObjectType({
             }
         },
 
+        UpdateUser: {
+            type: UserType,
+            args: {
+                id: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) },
+                name: { type: graphql.GraphQLString },
+                age: { type: graphql.GraphQLInt },
+                profession: { type: graphql.GraphQLString }
+            },
+            async resolve(parent, args) {
+                let updateParams = {
+                    name: args.name,
+                    age: args.age,
+                    profession: args.profession
+                }
+                let updatedUser
+                // `new: true` to return the modified document rather than the original. defaults to false.
+                try { updatedUser = await User.findByIdAndUpdate(args.id, updateParams, { new: true }) } catch (error) { throw error }
+                return updatedUser
+            }
+
+        },
+
         CreatePost: {
             type: PostType,
             args: {
@@ -181,6 +203,26 @@ const Mutation = new graphql.GraphQLObjectType({
                 let newPost
                 try { newPost = await post.save() } catch (error) { throw error }
                 return newPost
+            }
+        },
+
+        UpdatePost: {
+            type: PostType,
+            args: {
+                id: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) },
+                comment: { type: graphql.GraphQLNonNull(graphql.GraphQLString) },
+                userId: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) }
+            },
+            async resolve(parent, args) {
+                let updateParams = {
+                    comment: args.comment
+                }
+                let updatedPost
+                try { 
+                    let query = { _id: args.id, userId: args.userId }
+                    updatedPost = await Post.findOneAndUpdate(query, updateParams, { new: true }) 
+                } catch (error) { throw error }
+                return updatedPost
             }
         },
 
@@ -201,6 +243,28 @@ const Mutation = new graphql.GraphQLObjectType({
                 let newHobby
                 try { newHobby = await hobby.save() } catch (error) { throw error }
                 return newHobby
+            }
+        },
+
+        UpdateHobby: {
+            type: HobbyType,
+            args: {
+                id: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) },
+                title: { type: graphql.GraphQLString },
+                description: { type: graphql.GraphQLString },
+                userId: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) }
+            },
+            async resolve(parent, args) {
+                let updateParams = {
+                    title: args.title,
+                    description: args.description,
+                }
+                let updatedHobby
+                try { 
+                    let query = { _id: args.id, userId: args.userId }
+                    updatedHobby = await Hobby.findOneAndUpdate(query, updateParams, { new: true }) 
+                } catch (error) { throw error }
+                return updatedHobby
             }
         }
     }
