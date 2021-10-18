@@ -20,15 +20,19 @@ const UserType = new graphql.GraphQLObjectType({
 
         posts: { // All posts for this user.
             type: new graphql.GraphQLList(PostType),
-            resolve(parent, args) {
-                return _.filter(postsData, { userId: parent.id })
+            async resolve(parent, args) {
+                let posts
+                try { posts = await Post.find({ userId: parent.id }) } catch (error) { throw error }
+                return posts
             }
         },
 
         hobbies: { // All hobbies for this user.
             type: new graphql.GraphQLList(HobbyType),
-            resolve(parent, args) {
-                return _.filter(hobbiesData, { userId: parent.id })
+            async resolve(parent, args) {
+                let hobbies
+                try { hobbies = await Hobby.find({ userId: parent.id }) } catch (error) { throw error }
+                return hobbies
             }
         }
     })
@@ -42,8 +46,10 @@ const HobbyType = new graphql.GraphQLObjectType({
         description: { type: graphql.GraphQLString },
         user: {
             type: UserType,
-            resolve(parent, args) {
-                return _.find(usersData, { id: parent.userId })
+            async resolve(parent, args) {
+                let user
+                try { user = await User.findById(parent.userId).exec() } catch (error) { throw error }
+                return user
             }
         }
     })
@@ -56,8 +62,10 @@ const PostType = new graphql.GraphQLObjectType({
         comment: { type: graphql.GraphQLString },
         user: {
             type: UserType,
-            resolve(parent, args) {
-                // return _.find(usersData, { id: parent.userId })
+            async resolve(parent, args) {
+                let user 
+                try { user = await User.findById(parent.userId).exec() } catch (error) { throw error }
+                return user
             }
         }
     })
@@ -75,18 +83,19 @@ const RootQuery = new graphql.GraphQLObjectType({
                 id: { type: graphql.GraphQLID } 
             },
 
-            resolve(parent, args) {
-                // return _.find(usersData, { id: args.id })
-                
-                // We resolve with data
-                // get and return data from a datasource
+            async resolve(parent, args) {                
+                let user
+                try { user = await User.findById(args.id).exec() } catch(error) { throw error }
+                return user
             }
         },
 
         users: {
             type: new graphql.GraphQLList(UserType),
-            resolve(parent, args) {
-                // return usersData
+            async resolve(parent, args) {
+                let users
+                try { users = await User.find({}) } catch (error) { throw error }
+                return users
             }
         },
 
@@ -94,16 +103,19 @@ const RootQuery = new graphql.GraphQLObjectType({
             type: HobbyType,
             args: { id: { type: graphql.GraphQLID } },
 
-            resolve(parent, args) {
-                // return _.find(hobbiesData, { id: args.id })
-                // Return data for our hobby
+            async resolve(parent, args) {
+                let hobby
+                try { hobby = await Hobby.findById(args.id).exec() } catch (error) { throw error }
+                return hobby
             }
         },
 
         hobbies: {
             type: new graphql.GraphQLList(HobbyType),
-            resolve(parent, args) {
-                // return hobbiesData
+            async resolve(parent, args) {
+                let hobbies
+                try { hobbies = await Hobby.find({}) } catch (error) { throw error }
+                return hobbies
             }
         },
 
@@ -111,15 +123,19 @@ const RootQuery = new graphql.GraphQLObjectType({
             type: PostType,
             args: { id: { type: graphql.GraphQLID } },
 
-            resolve(parent, args) {
-                // return _.find(postsData, { id: args.id })
+            async resolve(parent, args) {
+                let post
+                try { post = await Post.findById(args.id).exec() } catch (error) { throw error }
+                return post
             }
         },
 
         posts: {
             type: graphql.GraphQLList(PostType),
-            resolve(parent, args) {
-                // return postsData
+            async resolve(parent, args) {
+                let posts
+                try { posts = await Post.find({}) } catch (error) { throw error }
+                return posts
             }
         },
     }
@@ -137,15 +153,16 @@ const Mutation = new graphql.GraphQLObjectType({
                 age: { type: graphql.GraphQLInt },
                 profession: { type: graphql.GraphQLString }
             },
-            resolve(parent, args) {
+            async resolve(parent, args) {
                 let user = new User({
                     name: args.name,
                     age: args.age,
                     profession: args.profession
                 })
                 // Save to db
-                user.save()
-                return user
+                let newUser
+                try { newUser = await user.save() } catch (error) { throw error }
+                return newUser
             }
         },
 
@@ -155,15 +172,15 @@ const Mutation = new graphql.GraphQLObjectType({
                 comment: { type: graphql.GraphQLString },
                 userId: { type: graphql.GraphQLID }
             },
-            resolve(parent, args) {
+            async resolve(parent, args) {
                 let post = new Post({
                     comment: args.comment,
                     userId: args.userId
                 })
                 // Save to db
-                post.save()
-
-                return post
+                let newPost
+                try { newPost = await post.save() } catch (error) { throw error }
+                return newPost
             }
         },
 
@@ -174,16 +191,16 @@ const Mutation = new graphql.GraphQLObjectType({
                 description: { type: graphql.GraphQLString },
                 userId: { type: graphql.GraphQLID },
             },
-            resolve(parent, args) {
+            async resolve(parent, args) {
                 let hobby = new Hobby({
                     title: args.title,
-                    desription: args.description,
+                    description: args.description,
                     userId: args.userId
                 })
                 // Save to db
-                hobby.save()
-                
-                return hobby
+                let newHobby
+                try { newHobby = await hobby.save() } catch (error) { throw error }
+                return newHobby
             }
         }
     }
