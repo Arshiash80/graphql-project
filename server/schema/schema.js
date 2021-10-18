@@ -1,6 +1,11 @@
 const graphql = require('graphql')
 const _ = require('lodash') 
 
+// Mongoose Models
+const User = require('../model/User')
+const Hobby = require('../model/Hobby')
+const Post = require('../model/Post')
+
 // dummy data
 let usersData = [
     { id: "1", name: "Arshia", age: 21, profession: "Software Developer" },
@@ -10,7 +15,7 @@ let usersData = [
     { id: "5", name: "Fatma", age: 24, profession: "Student" },
     { id: "6", name: "Ayse", age: 32, profession: "Engineer" },
 ]
-let hobbyData = [
+let hobbiesData = [
     { id: "1", title: "Programming", description: "description 1", userId: "1" },
     { id: "2", title: "Golf", description: "description 2", userId: "2" },
     { id: "3", title: "Baseball", description: "description 3", userId: "2" },
@@ -19,7 +24,7 @@ let hobbyData = [
     { id: "6", title: "Pool", description: "description 6", userId: "6" },
 ]
 
-let postData = [
+let postsData = [
     { id: "1", comment: "comment 1", userId: "1" },
     { id: "2", comment: "comment 2", userId: "1" },
     { id: "3", comment: "comment 3", userId: "3" },
@@ -41,14 +46,14 @@ const UserType = new graphql.GraphQLObjectType({
         posts: { // All posts for this user.
             type: new graphql.GraphQLList(PostType),
             resolve(parent, args) {
-                return _.filter(postData, { userId: parent.id })
+                return _.filter(postsData, { userId: parent.id })
             }
         },
 
         hobbies: { // All hobbies for this user.
             type: new graphql.GraphQLList(HobbyType),
             resolve(parent, args) {
-                return _.filter(hobbyData, { userId: parent.id })
+                return _.filter(hobbiesData, { userId: parent.id })
             }
         }
     })
@@ -91,7 +96,9 @@ const RootQuery = new graphql.GraphQLObjectType({
     fields: {
         user: {
             type: UserType,
-            args: { id: { type: graphql.GraphQLID } },
+            args: { 
+                id: { type: graphql.GraphQLID } 
+            },
 
             resolve(parent, args) {
                 return _.find(usersData, { id: args.id })
@@ -100,21 +107,44 @@ const RootQuery = new graphql.GraphQLObjectType({
                 // get and return data from a datasource
             }
         },
+
+        users: {
+            type: new graphql.GraphQLList(UserType),
+            resolve(parent, args) {
+                return usersData
+            }
+        },
+
         hobby: {
             type: HobbyType,
             args: { id: { type: graphql.GraphQLID } },
 
             resolve(parent, args) {
-                return _.find(hobbyData, { id: args.id })
+                return _.find(hobbiesData, { id: args.id })
                 // Return data for our hobby
             }
         },
+
+        hobbies: {
+            type: new graphql.GraphQLList(HobbyType),
+            resolve(parent, args) {
+                return hobbiesData
+            }
+        },
+
         post: {
             type: PostType,
             args: { id: { type: graphql.GraphQLID } },
 
             resolve(parent, args) {
-                return _.find(postData, { id: args.id })
+                return _.find(postsData, { id: args.id })
+            }
+        },
+
+        posts: {
+            type: graphql.GraphQLList(PostType),
+            resolve(parent, args) {
+                return postsData
             }
         },
     }
