@@ -4,8 +4,8 @@
   "description": "GraphQL demo project",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "devstart": "nodemon app"
+    "devstart": "nodemon app",
+    "start": "node index.js"
   },
   "author": "Arshia Shahidi",
   "license": "ISC",

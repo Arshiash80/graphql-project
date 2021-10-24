@@ -80,7 +80,7 @@ const RootQuery = new graphql.GraphQLObjectType({
         user: {
             type: UserType,
             args: { 
-                id: { type: graphql.GraphQLID } 
+                id: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) } 
             },
 
             async resolve(parent, args) {                
@@ -101,7 +101,7 @@ const RootQuery = new graphql.GraphQLObjectType({
 
         hobby: {
             type: HobbyType,
-            args: { id: { type: graphql.GraphQLID } },
+            args: { id: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) } },
 
             async resolve(parent, args) {
                 let hobby
@@ -121,7 +121,7 @@ const RootQuery = new graphql.GraphQLObjectType({
 
         post: {
             type: PostType,
-            args: { id: { type: graphql.GraphQLID } },
+            args: { id: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) } },
 
             async resolve(parent, args) {
                 let post
@@ -148,7 +148,6 @@ const Mutation = new graphql.GraphQLObjectType({
         CreateUser: {
             type: UserType,
             args: {
-                // id: { type: graphql.GraphQLID },
                 name: { type: new graphql.GraphQLNonNull(graphql.GraphQLString) },
                 age: { type: new graphql.GraphQLNonNull(graphql.GraphQLInt) },
                 profession: { type: graphql.GraphQLString }
@@ -188,6 +187,21 @@ const Mutation = new graphql.GraphQLObjectType({
 
         },
 
+        RemoveUser: {
+            type: UserType,
+            args: {
+                id: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) }
+            },
+            async resolve(parent, args) {
+                let removedUser
+                try {
+                    removedUser = await User.findByIdAndRemove(args.id).exec()
+                    if (!removedUser) { throw new("RemoveUser Error") }
+                } catch (error) { throw error }    
+                return removedUser
+            }
+        },
+
         CreatePost: {
             type: PostType,
             args: {
@@ -223,6 +237,21 @@ const Mutation = new graphql.GraphQLObjectType({
                     updatedPost = await Post.findOneAndUpdate(query, updateParams, { new: true }) 
                 } catch (error) { throw error }
                 return updatedPost
+            }
+        },
+
+        RemovePost: {
+            type: PostType,
+            args: {
+                id: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) }
+            },
+            async resolve(parent, args) {
+                let removedPost
+                try {
+                    removedPost = await Post.findByIdAndRemove(args.id).exec()
+                    if (!removedPost) { throw new("RemovePost Error") }
+                } catch (error) { throw error }
+                return removedPost
             }
         },
 
@@ -266,7 +295,22 @@ const Mutation = new graphql.GraphQLObjectType({
                 } catch (error) { throw error }
                 return updatedHobby
             }
-        }
+        },
+
+        RemoveHobby: {
+            type: HobbyType,
+            args: {
+                id: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) }
+            },
+            async resolve(parent, args) {
+                let removedHobby
+                try {
+                    removedHobby = await Hobby.findByIdAndRemove(args.id).exec()
+                    if (!removedHobby) { throw new("RemoveHobby Error") }
+                } catch (error) { throw error }
+                return removedHobby
+            }
+        },
     }
 })
 

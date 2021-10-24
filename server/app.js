@@ -7,8 +7,10 @@ dotenv.config();
 const schema = require('./schema/schema') // RootQuery
 const testSchema = require('./schema/types_schema')
 
-const cors = require('cors')
+const cors = require('cors');
+const { property } = require('lodash');
 
+const PORT = process.env.PORT || 4000
 const app = express()
 
 let mongoDBConnectionString = process.env.MONGODB_CONNECTION_STRING
@@ -25,6 +27,6 @@ app.use('/graphql', GraphQL.graphqlHTTP({
 }))
 
 
-app.listen(4000, () => { // localhost:4000
-    console.log("Listening at port 4000")
+app.listen(PORT, () => {
+    console.log(`Listening at port ${PORT}`)
 })
