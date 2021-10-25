@@ -2,14 +2,15 @@
   "name": "graphql-project",
   "version": "1.0.0",
   "description": "GraphQL demo project",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "devstart": "nodemon app",
-    "start": "node index.js"
+    "start": "node app.js"
   },
   "author": "Arshia Shahidi",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-graphql": "^0.12.0",

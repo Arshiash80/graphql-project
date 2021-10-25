@@ -8,7 +8,7 @@ const schema = require('./schema/schema') // RootQuery
 const testSchema = require('./schema/types_schema')
 
 const cors = require('cors');
-const { property } = require('lodash');
+
 
 const PORT = process.env.PORT || 4000
 const app = express()
@@ -27,6 +27,6 @@ app.use('/graphql', GraphQL.graphqlHTTP({
 }))
 
 
-app.listen(PORT, () => {
-    console.log(`Listening at port ${PORT}`)
-})
+app.listen(PORT, function(){
+    console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);
+});
